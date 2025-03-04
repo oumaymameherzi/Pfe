@@ -1,7 +1,6 @@
 package com.safalifter.authservice.service;
 
 import com.safalifter.authservice.dto.UserDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,26 +9,28 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RequiredArgsConstructor
-
 public class CustomUserDetails implements UserDetails {
     private final UserDto user;
+
+    public CustomUserDetails(UserDto user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Stream.of(user.getRole())
-                .map(x -> new SimpleGrantedAuthority("ROLE_" + x.name()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getPassword(); // Ensure this matches the hashed password in the database
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail(); // Use email as the username
     }
 
     @Override

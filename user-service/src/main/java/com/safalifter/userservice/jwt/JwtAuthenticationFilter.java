@@ -1,14 +1,20 @@
 package com.safalifter.userservice.jwt;
 
+import com.safalifter.userservice.service.UserService;
 import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -16,34 +22,59 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
-@RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    private final UserDetailsService userDetailsService;
+
+    public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
-            String token = request.getHeader("Authorization");
+            String authorizationHeader = request.getHeader("Authorization");
 
-            if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-                Claims claims = jwtUtil.getClaims(token.substring(7));
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String token = authorizationHeader.substring(7);
+                Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(claims.getIssuer());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        claims.getSubject(), null, Collections.singleton(authority));
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                String username = claims.getSubject();
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (userDetails != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (ExpiredJwtException ex) {
+            log.error("JWT expired", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT expired");
+        } catch (UnsupportedJwtException ex) {
+            log.error("Unsupported JWT", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unsupported JWT");
+        } catch (MalformedJwtException ex) {
+            log.error("Invalid JWT", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT");
+        } catch (SignatureException ex) {
+            log.error("Invalid JWT signature", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature");
+        } catch (IllegalArgumentException ex) {
+            log.error("JWT claims string is empty", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT claims string is empty");
+        } catch (Exception ex) {
+            log.error("Error during JWT authentication", ex);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error during JWT authentication");
         }
+
         filterChain.doFilter(request, response);
     }
 }

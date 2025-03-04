@@ -19,7 +19,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class AuthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http
+                .cors().and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/v1/auth/**").permitAll()
                 .and()
@@ -36,16 +38,7 @@ public class AuthConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(
-                "/v1/auth/**",
-                "/swagger-resources/**",
-                "/swagger-ui.html/**",
-                "/swagger-resources/**",
-                "/swagger-ui/**",
-                "/v3/api-docs/**");
-    }
+
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -53,7 +46,10 @@ public class AuthConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedMethods("*");
+                        .allowedOrigins("http://127.0.0.1:*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);;
             }
         };
     }

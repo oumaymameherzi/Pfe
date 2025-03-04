@@ -21,20 +21,10 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri("lb://user-service"))
 
-                .route("job-service", r -> r.path("/v1/job-service/**")
-                        .filters(f -> f.filter(filter))
-                        .uri("lb://job-service"))
-
-                .route("notification-service", r -> r.path("/v1/notification/**")
-                        .filters(f -> f.filter(filter))
-                        .uri("lb://notification-service"))
 
                 .route("auth-service", r -> r.path("/v1/auth/**")
                         .uri("lb://auth-service"))
 
-                .route("file-storage", r -> r.path("/v1/file-storage/**")
-                        .filters(f -> f.filter(filter))
-                        .uri("lb://file-storage"))
                 .build();
     }
 }
