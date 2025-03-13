@@ -28,21 +28,11 @@ public class QuoteValidationService {
         log.info("✅ New quote {} created", newQuote.getId());
     }
 
-    public void updateQuoteValidation(QuoteValidation quoteValidation, String id) {
+    public void updateQuoteValidation(QuoteValidationRequest quoteValidationRequest, String id) {
         QuoteValidation existingQuote = quoteValidationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quote Validation not found with id " + id));
 
-        existingQuote.setQuote(quoteValidation.getQuote());
-        existingQuote.setQuoteBesoin(quoteValidation.getQuoteBesoin());
-        existingQuote.setUtilisationSystemePrecedent(quoteValidation.getUtilisationSystemePrecedent());
-        existingQuote.setFonctionnalitesImportantes(quoteValidation.getFonctionnalitesImportantes());
-        existingQuote.setTypesSupportsUtilises(quoteValidation.getTypesSupportsUtilises());
-        existingQuote.setDefisRencontres(quoteValidation.getDefisRencontres());
-        existingQuote.setNombreUtilisateurs(quoteValidation.getNombreUtilisateurs());
-        existingQuote.setEnvironnementSecurite(quoteValidation.getEnvironnementSecurite());
-        existingQuote.setIntegrationPointage(quoteValidation.getIntegrationPointage());
-        existingQuote.setImportanceFaciliteUtilisation(quoteValidation.getImportanceFaciliteUtilisation());
-        existingQuote.setPreoccupationsSecurite(quoteValidation.getPreoccupationsSecurite());
+        existingQuote.updateFromRequest(quoteValidationRequest);
         quoteValidationRepository.save(existingQuote);
     }
 
@@ -71,4 +61,13 @@ public class QuoteValidationService {
         quoteValidationRepository.deleteById(id);
         log.info("✅ Quote {} deleted", id);
     }
+
+    public QuoteValidationResponse getQuoteValidationByIdquote(String quote) {
+        QuoteValidation quoteValidation = quoteValidationRepository.findByQuote(quote);
+        if (quoteValidation == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "❌ Quote validation not found with quote: " + quote);
+        }
+        return quoteValidationMapper.mapToQuoteResponse(quoteValidation);
+    }
+
 }

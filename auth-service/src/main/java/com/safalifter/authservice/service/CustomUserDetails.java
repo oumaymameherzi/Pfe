@@ -8,11 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 public class CustomUserDetails implements UserDetails {
     private final UserDto user;
 
     public CustomUserDetails(UserDto user) {
+        if (user == null || user.getEmail() == null || user.getPassword() == null || user.getRole() == null) {
+            throw new IllegalArgumentException("User details are incomplete");
+        }
         this.user = user;
     }
 
@@ -25,12 +27,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword(); // Ensure this matches the hashed password in the database
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // Use email as the username
+        return user.getEmail();
     }
 
     @Override

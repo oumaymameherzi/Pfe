@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import javax.ws.rs.DefaultValue;
 import java.time.LocalDateTime;
 
 @Builder
@@ -36,19 +37,17 @@ public class User {
     @Email(message = "Email should be valid")
     @Column(unique = true, nullable = false, updatable = false)
     private String email;
-
+@DefaultValue("CLIENT")
     private Role role;
-
+@DefaultValue("INACTIVE")
     private Active active;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
-    // Additional fields that might be useful
     private String profilePictureUrl;
 
-    @AssertTrue(message = "User must be active or inactive")
-    private boolean isActiveOrInactive() {
-        return active != null;
+    private Active isActiveOrInactive() {
+        return active ;
     }
 }

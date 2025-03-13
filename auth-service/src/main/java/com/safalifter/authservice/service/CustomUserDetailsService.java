@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
@@ -26,6 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDto userDto = response.getBody();
 
         if (userDto == null || userDto.getEmail() == null || userDto.getPassword() == null || userDto.getRole() == null) {
+            logger.error("User details are incomplete for email: {}", email);
             throw new UsernameNotFoundException("User details are incomplete");
         }
 

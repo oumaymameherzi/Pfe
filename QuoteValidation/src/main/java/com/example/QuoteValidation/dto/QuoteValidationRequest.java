@@ -15,32 +15,16 @@ import java.util.UUID;
 @Setter
 
 public class QuoteValidationRequest {
-    String quote;
-    private FieldValidation QuoteBesoin;
-    private FieldValidation UtilisationSystemePrecedent;
-    private FieldValidation fonctionnalitesImportantes;
-    private FieldValidation typesSupportsUtilises;
-    private FieldValidation defisRencontres;
-    private FieldValidation nombreUtilisateurs;
-    private FieldValidation environnementSecurite;
-    private FieldValidation integrationPointage;
-    private FieldValidation importanceFaciliteUtilisation;
-    private FieldValidation preoccupationsSecurite;
+    private String quote;
+    private String Commentaire;
+    private Double PrixPropose;
 
 
     public  QuoteValidation toEntity(){
         return QuoteValidation.builder()
                 .quote(this.quote)
-                .QuoteBesoin(this.QuoteBesoin)
-                .UtilisationSystemePrecedent(this.UtilisationSystemePrecedent)
-                .fonctionnalitesImportantes(this.fonctionnalitesImportantes)
-                .typesSupportsUtilises(this.typesSupportsUtilises)
-                .defisRencontres(this.defisRencontres)
-                .nombreUtilisateurs(this.nombreUtilisateurs)
-                .environnementSecurite(this.environnementSecurite)
-                .integrationPointage(this.integrationPointage)
-                .importanceFaciliteUtilisation(this.importanceFaciliteUtilisation)
-                .preoccupationsSecurite(this.preoccupationsSecurite)
+                .Commentaire(this.Commentaire)
+                .PrixPropose(this.PrixPropose)
                 .build();
     }
 }

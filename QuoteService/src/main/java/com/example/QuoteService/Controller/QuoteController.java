@@ -68,11 +68,13 @@ public class QuoteController {
         quoteService.deleteAllQuotes();
     }
 
-    @GetMapping("/api/quote/status/{Etat}")
+    @GetMapping("/status/{etatquote}")
     @ResponseStatus(HttpStatus.OK)
-    public List<QuoteResponse> getQuoteByEtat(@PathVariable String Etat) {
-        return quoteService.getAllQuotesByEtatQuote(Etat);
+    public List<QuoteResponse> getQuoteByEtat(@PathVariable String etatquote) {
+        log.info("✅ Requête reçue pour etatQuote: {}", etatquote);
+        return quoteService.getAllQuotesByEtatQuote(etatquote);
     }
+
 
     @GetMapping("/username/{username}")
     @ResponseStatus(HttpStatus.OK)

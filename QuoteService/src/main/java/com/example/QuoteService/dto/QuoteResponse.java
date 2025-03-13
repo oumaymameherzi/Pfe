@@ -4,6 +4,8 @@ import com.example.QuoteService.Entities.DefisRencontres;
 import com.example.QuoteService.Entities.FonctionnalitesImportantes;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -24,6 +26,7 @@ public class QuoteResponse {
     private String importanceFaciliteUtilisation;
     private boolean preoccupationsSecurite;
     private String detailsPreoccupations;
-    private String EtatQuote;
+    private String etatQuote;
     private String Username;
+    private LocalDateTime dateCreation;
 }

@@ -8,10 +8,13 @@ import com.safalifter.userservice.repository.UserRepository;
 import com.safalifter.userservice.request.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class UserService {
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .email(request.getEmail())
-                .role(Role.USER)
+                .role(Role.CLIENT)
                 .active(Active.ACTIVE).build();
         return userRepository.save(toSave);
     }
@@ -68,5 +71,12 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
+    public void updateUserRole(String email, String newRole) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(Role.valueOf(newRole));
+        userRepository.save(user);
+    }
 
 }

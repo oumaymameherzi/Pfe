@@ -10,6 +10,5 @@ public class UserDto {
     private String email;
     private String password; // Ensure this is included
     private Role role;       // Ensure this is included
-
-    // Getters and setters
+    private String username;
 }

@@ -7,25 +7,41 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="job-service" />
         <module name="config-server" />
+        <module name="QuoteService" />
         <module name="auth-service" />
+        <module name="QuoteValidation" />
         <module name="user-service" />
         <module name="eureka-server" />
         <module name="file-service" />
         <module name="gateway" />
-        <module name="notification-service" />
-        <module name="file-storage" />
+      </profile>
+      <profile name="Annotation profile for QuoteService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="User_Management" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="chat-service" target="17" />
       <module name="contact-service" target="17" />
       <module name="file-service" target="17" />
+      <module name="file-storage" target="17" />
+      <module name="job-service" target="17" />
+      <module name="notification-service" target="17" />
+      <module name="Quote_Service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="QuoteService" options="-parameters" />
+      <module name="QuoteValidation" options="-parameters" />
+      <module name="Quote_Service" options="-parameters" />
+      <module name="User_Management" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="chat-service" options="-parameters" />
       <module name="config-server" options="-parameters" />

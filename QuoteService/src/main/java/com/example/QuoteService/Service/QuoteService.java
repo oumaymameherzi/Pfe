@@ -82,15 +82,22 @@ public class QuoteService {
     }
 
     public List<QuoteResponse> getAllQuotesByEtatQuote(String etatQuote) {
+        log.info("🔍 Recherche des quotes avec etatQuote = '{}'", etatQuote);
+
         List<Quote> quotes = quoteRepository.findByEtatQuote(etatQuote);
-        log.info("Quotes found in DB: {}", quotes.size());  // Log the number of quotes found
-        if (quotes.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No quotes found");
+
+        if (quotes == null || quotes.isEmpty()) {
+            log.warn("⚠️ Aucune quote trouvée pour l'état : {}", etatQuote);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucune quote trouvée");
         }
+
+        log.info("✅ {} quotes trouvées", quotes.size());
+
         return quotes.stream()
                 .map(quoteMapper::mapToQuoteResponse)
                 .toList();
     }
+
 
     public List<QuoteResponse> getAllQuotesByUsername(String Username) {
         List<Quote> quotes = quoteRepository.findByUsername(Username);

@@ -6,6 +6,9 @@ import org.springframework.data.annotation.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.PrePersist;
+import java.time.LocalDateTime;
+
 @Data
 @Document(collection = "quotes")
 @Builder
@@ -27,9 +30,14 @@ public class Quote {
     private String importanceFaciliteUtilisation;
     private boolean preoccupationsSecurite;
     private String detailsPreoccupations;
-    private String EtatQuote;
+    private String etatQuote;
     private String Username;
+    private LocalDateTime dateCreation;
 
+    @PrePersist
+    public void prePersist() {
+        this.dateCreation = LocalDateTime.now();
+    }
 
 
     public void updateFromRequest(QuoteRequest request) {
@@ -45,6 +53,5 @@ public class Quote {
         this.setPreoccupationsSecurite(request.isPreoccupationsSecurite());
         this.setDetailsPreoccupations(request.getDetailsPreoccupations());
         this.setEtatQuote(request.getEtatQuote());
-        this.setUsername(request.getUsername());
     }
 }

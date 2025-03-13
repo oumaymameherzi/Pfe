@@ -23,8 +23,9 @@ public class QuoteMapper {
                 .importanceFaciliteUtilisation(quote.getImportanceFaciliteUtilisation())
                 .preoccupationsSecurite(quote.isPreoccupationsSecurite())
                 .detailsPreoccupations(quote.getDetailsPreoccupations())
-                .EtatQuote(quote.getEtatQuote())
+                .etatQuote(quote.getEtatQuote())
                 .Username(quote.getUsername())
+                .dateCreation(quote.getDateCreation())
                 .build();
     }
 }

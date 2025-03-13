@@ -14,16 +14,8 @@ import java.util.List;
 
 public class QuoteValidationResponse {
     String id;
-    String quote;
-    private FieldValidation QuoteBesoin;
-    private FieldValidation UtilisationSystemePrecedent;
-    private FieldValidation fonctionnalitesImportantes;
-    private FieldValidation typesSupportsUtilises;
-    private FieldValidation defisRencontres;
-    private FieldValidation nombreUtilisateurs;
-    private FieldValidation environnementSecurite;
-    private FieldValidation integrationPointage;
-    private FieldValidation importanceFaciliteUtilisation;
-    private FieldValidation preoccupationsSecurite;
+    private String quote;
+    private String Commentaire;
+    private Double PrixPropose;
 
 }

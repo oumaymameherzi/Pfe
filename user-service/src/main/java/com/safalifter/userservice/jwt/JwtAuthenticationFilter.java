@@ -1,14 +1,13 @@
 package com.safalifter.userservice.jwt;
 
+import com.safalifter.userservice.jwt.JwtUtil;
 import com.safalifter.userservice.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,14 +25,11 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    private final UserDetailsService userDetailsService;
-
-    public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -43,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String token = authorizationHeader.substring(7);
-                Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+                log.info("JWT Token: {}", token); // Log the token
+
+                Claims claims = jwtUtil.getClaims(token); // Use JwtUtil to extract claims
+                log.info("JWT Claims: {}", claims); // Log the claims
 
                 String username = claims.getSubject();
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -53,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.info("User authenticated: {}", username); // Log successful authentication
                 }
             }
         } catch (ExpiredJwtException ex) {
@@ -64,12 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT", ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT");
-        } catch (SignatureException ex) {
-            log.error("Invalid JWT signature", ex);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature");
-        } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty", ex);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT claims string is empty");
         } catch (Exception ex) {
             log.error("Error during JWT authentication", ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error during JWT authentication");

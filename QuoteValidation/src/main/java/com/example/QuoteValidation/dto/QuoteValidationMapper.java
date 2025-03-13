@@ -16,16 +16,8 @@ public class QuoteValidationMapper {
         return QuoteValidationResponse.builder()
                 .id(quote.getId())
                 .quote(quote.getQuote()) // Correction ici
-                .QuoteBesoin(quote.getQuoteBesoin())
-                .UtilisationSystemePrecedent(quote.getUtilisationSystemePrecedent())
-                .fonctionnalitesImportantes(quote.getFonctionnalitesImportantes())
-                .typesSupportsUtilises(quote.getTypesSupportsUtilises())
-                .defisRencontres(quote.getDefisRencontres())
-                .nombreUtilisateurs(quote.getNombreUtilisateurs())
-                .environnementSecurite(quote.getEnvironnementSecurite())
-                .integrationPointage(quote.getIntegrationPointage())
-                .importanceFaciliteUtilisation(quote.getImportanceFaciliteUtilisation())
-                .preoccupationsSecurite(quote.getPreoccupationsSecurite())
+                .Commentaire(quote.getCommentaire())
+                .PrixPropose(quote.getPrixPropose())
                 .build();
     }
 }

@@ -5,6 +5,8 @@ import com.example.QuoteService.Entities.FonctionnalitesImportantes;
 import com.example.QuoteService.Entities.Quote;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -23,8 +25,9 @@ public class QuoteRequest {
     private String importanceFaciliteUtilisation;
     private boolean preoccupationsSecurite;
     private String detailsPreoccupations;
-    private String EtatQuote;
+    private String etatQuote;
     private String Username;
+    private LocalDateTime dateCreation;
 
     public Quote toEntity() {
         return Quote.builder()
@@ -39,8 +42,9 @@ public class QuoteRequest {
                 .importanceFaciliteUtilisation(this.importanceFaciliteUtilisation)
                 .preoccupationsSecurite(this.preoccupationsSecurite)
                 .detailsPreoccupations(this.detailsPreoccupations)
-                .EtatQuote(this.EtatQuote)
+                .etatQuote(this.etatQuote)
                 .Username(this.Username)
+                .dateCreation(LocalDateTime.now())
                 .build();
     }
 }

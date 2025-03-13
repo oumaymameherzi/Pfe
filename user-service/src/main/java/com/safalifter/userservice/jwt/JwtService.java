@@ -1,4 +1,4 @@
-package com.safalifter.authservice.service;
+package com.safalifter.userservice.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -2,12 +2,12 @@ package com.safalifter.authservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // ✅ Ajout de l'importation
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,7 +23,9 @@ public class AuthConfig {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ Autoriser les requêtes preflight CORS
                 .antMatchers("/v1/auth/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .build();
     }
@@ -38,18 +40,17 @@ public class AuthConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://127.0.0.1:*")
-                        .allowedMethods("*")
+                        .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*")  // ✅ Accepte localhost ET 127.0.0.1
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);;
+                        .exposedHeaders("*") // ✅ Expose les headers pour éviter les blocages
+                        .allowCredentials(true); // ✅ Permet les requêtes avec cookies/sessions
             }
         };
     }
